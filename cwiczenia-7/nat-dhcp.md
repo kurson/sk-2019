@@ -6,7 +6,7 @@ NAT - Network address translation
 Zadanie
 ------------
 
-![zadanie 7](nat-1.svg)
+![zadanie 7](nat-1.svg) 
 
 1.
    * Przygotuj konfigurację sieci zgodnie z powyższym diagramem
@@ -31,6 +31,7 @@ Zadanie
     * Rozpocznij od zapoznania się z dokumentacją oraz instalacji programu ``isc-dhcp-server`` dla ``PC1``
 
  
+
 
 Zadanie do domu
 ---------------
