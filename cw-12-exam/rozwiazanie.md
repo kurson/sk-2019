@@ -58,18 +58,81 @@ Konfiguracja:
       netmask 255.255.255.0`
 
   DHCP i DNS:
-  dla każdego WIFI anagolicznie (parter):
+  dla każdego WIFI (parter):
+      nano /etc/default/isc-dhcp-server 
+        odkomentować ścieżkę do pliku config DHCPDv4_CONF
+        dopisać interfejs INTERFACESv4="enp0s8"
+      nano /etc/dhcp/dhcpd.conf - dopisać konfiguracje sieci :
+        subnet 10.1.0.0 netmask 255.255.252.0 {
+          range 10.1.0.2 10.1.3.254;
+          option routers 10.1.0.1;
+          option domain-name-servers 1.1.1.1, 1.0.0.1;
+        }
+      systemctl restart isc-dhcp-server
+      
+   (piętro 1):
+      nano /etc/default/isc-dhcp-server 
+        odkomentować ścieżkę do pliku config DHCPDv4_CONF
+        dopisać interfejs INTERFACESv4="enp0s9"
+      nano /etc/dhcp/dhcpd.conf - dopisać konfiguracje sieci :
+        subnet 10.1.4.0 netmask 255.255.252.0 {
+          range 10.1.4.2 10.1.7.254;
+          option routers 10.1.4.1;
+          option domain-name-servers 1.1.1.1, 1.0.0.1;
+        }
+      systemctl restart isc-dhcp-server
+      
+  (piętro 2):
       nano /etc/default/isc-dhcp-server 
         odkomentować ścieżkę do pliku config DHCPDv4_CONF
         dopisać interfejs INTERFACESv4="enp0s10"
       nano /etc/dhcp/dhcpd.conf - dopisać konfiguracje sieci :
-        subnet 188.156.224.0 netmask 255.255.252.0 {
-          range 188.156.224.2 188.156.227.254;
-          option routers 188.156.224.1;
+        subnet 10.1.8.0 netmask 255.255.252.0 {
+          range 10.1.8.2 10.1.11.254;
+          option routers 10.1.8.1;
           option domain-name-servers 1.1.1.1, 1.0.0.1;
         }
-      systemctl restart isc-dhcp-server`
+      systemctl restart isc-dhcp-server
+      
+      
+  SERWER LAN:
+      nano /etc/default/isc-dhcp-server 
+        odkomentować ścieżkę do pliku config DHCPDv4_CONF
+        dopisać interfejs INTERFACESv4="enp0s8 enp0s9 enp0s10 enp0s11 ... enp0s19"
+        
+  DHCP dla każdej sali analogicznie (sala 009):
+      nano /etc/dhcp/dhcpd.conf - dopisać konfiguracje sieci :
+        subnet 10.0.9.0 netmask 255.255.255.0 {
+          range 10.0.9.1 10.0.9.254;
+          option routers 10.0.9.255;
+          option domain-name-servers 1.1.1.1, 1.0.0.1;
+        }
+      systemctl restart isc-dhcp-server
 
 
+  Routing:
+    Serwer LAN: up ip rotue add default via 188.156.220.162
+
+    Komputery w labach (sala 009): up ip route add default via 10.0.9.62
+
+    Urządzenia na WIFI piętro 0/1/2: up ip route add default 10.1.0/4/8.1
+
+  IP Forwarding:
+    W routerach wifi i w serwerze lan:
+      nano /etc/sysctl.d/99-sysctl.conf
+        odkomentować net.ipv4.ip_forward=1 w 
+        
+  MASQUERADE:
+    PC0 (Główny router):
+      iptables -t nat -A POSTROUTING -s 188.156.220.161/27 -o enp0s3 -j MASQUERADE
+      iptables -t nat -A POSTROUTING -s 10.1.0.0/22 -o enp0s3 -j MASQUERADE
+      iptables -t nat -A POSTROUTING -s 10.1.4.0/22 -o enp0s3 -j MASQUERADE
+      iptables -t nat -A POSTROUTING -s 10.1.8.0/22 -o enp0s3 -j MASQUERADE
+    Serwer LAN, dla każdej sali analogicznie:
+      iptables -t nat -A POSTROUTING -s 10.0.(numer sali).0/26 -o enp0s3 -j MASQUERADE
+    Zapisanie: 
+      ipatables-save > /etc/iptables.up.rules
+      nano /etc/network/interfaces
+      (dopisać) post-up iptables-restore < /etc/iptables.up.rules
 ```
 ![diagram](Diagram1.png)
