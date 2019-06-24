@@ -1,6 +1,7 @@
-<p>Potrzebna sieć wifi na każdym piętrze, czyli 3 sieci z maskami 22, ponieważ min. 800 urządzeń
+```
+Potrzebna sieć wifi na każdym piętrze, czyli 3 sieci z maskami 22, ponieważ min. 800 urządzeń
 Dla każdego laboratorium maska 24, mogłaby być 26 czyli dla 62 urządzeń, min. potrzeba 35.
-Ponieważ w puli adresów publicznych dostępne jest tylko 30 adresów, do adresowania stanowisk i urządzeń podpiętych na wifi wykorzystuję pulę adresów prywatnych, CIDR: 10.0.0.0/8</p>
+Ponieważ w puli adresów publicznych dostępne jest tylko 30 adresów, do adresowania stanowisk i urządzeń podpiętych na wifi wykorzystuję pulę adresów prywatnych, CIDR: 10.0.0.0/8
 
 Właściwe adresy:
   - 188.156.220.161/27 połączenie z internetem
@@ -21,8 +22,9 @@ Właściwe adresy:
     - 203: 10.0.203.0/24
     - 204: 10.0.204.0/24
     
-<p>
-  Konfiguracja:
+    
+  
+Konfiguracja:
   PC0 (Główny router)
     enp0s3: internet
     enp0s8 (wifi parter)
@@ -53,9 +55,8 @@ Właściwe adresy:
     ...
     enp0s19
       address 10.0.204.255
-      netmask 255.255.255.0
-</p>
-<p>
+      netmask 255.255.255.0`
+
   DHCP i DNS:
   dla każdego WIFI anagolicznie (parter):
       nano /etc/default/isc-dhcp-server 
@@ -67,9 +68,8 @@ Właściwe adresy:
           option routers 188.156.224.1;
           option domain-name-servers 1.1.1.1, 1.0.0.1;
         }
-      systemctl restart isc-dhcp-server
-</p>
+      systemctl restart isc-dhcp-server`
 
 
-
+```
 ![diagram](Diagram1.png)
